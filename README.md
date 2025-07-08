@@ -50,6 +50,8 @@ A smart, responsive, and ML-powered web application that predicts an employee’
 | Experience | 2              |
 | Hours/week | 40             |
 | Country    | India          |
+
+
 📂 Project Folder Structure
 -Employee-Salary-Predictor/
 │
