@@ -11,7 +11,7 @@ A smart, responsive, and ML-powered web application that predicts an employee’
 
 | Home Page | Dark Mode | Salary Chart |
 |-----------|-----------|--------------|
-| ![Light UI](light.png) | ![Dark UI](dark.png) | ![Chart](chart.png) |
+| ![Light UI](light.png) | ![Dark UI](dark ui.png) | ![Chart](chart.png) |
 
 ---
 
