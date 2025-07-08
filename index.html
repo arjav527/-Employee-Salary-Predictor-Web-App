@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Salary Predictor</title>
+
+  <!-- Fonts & Libraries -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <!-- Styles -->
+  <style>
+    :root {
+      --bg-light: #eef2f3;
+      --bg-dark: #0e0e0e;
+      --text-light: #1d1d1d;
+      --text-dark: #f0f0f0;
+      --accent: #4a90e2;
+      --card-light: rgba(255, 255, 255, 0.3);
+      --card-dark: rgba(20, 20, 20, 0.3);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-light);
+      transition: all 0.4s ease;
+      margin: 0;
+      padding: 30px;
+    }
+
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .container {
+      max-width: 520px;
+      margin: auto;
+      background: var(--card-light);
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      transition: 0.4s;
+    }
+
+    body.dark .container {
+      background: var(--card-dark);
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--text-light);
+    }
+
+    body.dark h2 {
+      color: var(--text-dark);
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+
+    body.dark label {
+      color: var(--text-dark);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      background: rgba(255,255,255,0.85);
+      transition: all 0.3s ease;
+    }
+
+    input[type="submit"] {
+      background-color: var(--accent);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #357abd;
+    }
+
+    .toggle {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    .toggle input {
+      transform: scale(1.2);
+      margin-left: 8px;
+    }
+
+    .result {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 20px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .lottie-box {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .chart-section {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .pdf-btn {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .pdf-btn button {
+      background-color: var(--accent);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    canvas {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="toggle">
+    🌗 Dark Mode <input type="checkbox" id="darkToggle" />
+  </div>
+
+  <h2>💼 Employee Salary Predictor</h2>
+
+  <form method="POST" action="/predict">
+    <label>Name:</label>
+    <input type="text" name="name" required placeholder="e.g. Arjav Jain" />
+
+    <label>Age:</label>
+    <input type="number" name="age" required />
+
+    <label>Gender:</label>
+    <select name="gender">
+      <option>Male</option>
+      <option>Female</option>
+    </select>
+
+    <label>Education:</label>
+    <select name="education">
+      <option>10th</option>
+          <option>12th</option>
+          <option>Bachelor's</option>
+          <option>Master's</option>
+          <option>PhD</option>
+    </select>
+
+    <label>Occupation:</label>
+    <select name="occupation">
+          <option>Data Scientist</option>
+          <option>AI/ML Engineer</option>
+          <option>Data Analyst</option>
+          <option>Web Developer</option>
+          <option>Software Engineer</option>
+          <option>System Analyst</option>
+          <option>IT Consultant</option>
+          <option>Cybersecurity Analyst</option>
+          <option>Network Admin</option>
+          <option>Tech Support</option>
+    </select>
+
+    <label>Workclass:</label>
+    <select name="workclass">
+     <option>Private Sector</option>
+          <option>Freelancer / Self-employed</option>
+          <option>Government Job</option>
+          <option>Startup / Contract</option>
+          <option>Currently Unemployed</option>
+    </select>
+
+    <label>Experience (years):</label>
+    <input type="number" name="experience" required />
+
+    <label>Hours per Week:</label>
+    <input type="number" name="hours" required />
+
+    <label>Country:</label>
+    <select name="country">
+     <option>India</option>
+          <option>United States</option>
+          <option>Canada</option>
+          <option>Germany</option>
+          <option>Australia</option>
+    </select>
+
+    <input type="submit" value="Predict Salary" />
+  </form>
+
+  {% if prediction_text %}
+    <div class="lottie-box">
+      <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_e3wz3jdd.json"
+        background="transparent" speed="1" style="width: 100px; height: 100px;" autoplay>
+      </lottie-player>
+    </div>
+
+    <div class="result">{{ prediction_text|safe }}</div>
+
+    <div class="chart-section" id="chart-section">
+      <canvas id="salaryChart"></canvas>
+    </div>
+
+    <div class="pdf-btn">
+      <button onclick="downloadPDF()">📄 Download Chart Report</button>
+    </div>
+  {% endif %}
+</div>
+
+<!-- JS Scripts -->
+<script>
+  // DARK MODE
+  const toggle = document.getElementById('darkToggle');
+  toggle.addEventListener('change', () => {
+    document.body.classList.toggle('dark');
+  });
+
+  {% if predicted_salary %}
+  const ctx = document.getElementById('salaryChart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Your Salary', 'Average Salary'],
+      datasets: [{
+        label: '₹ Salary (per month)',
+        data: [{{ predicted_salary }}, 48000],
+        backgroundColor: ['#4a90e2', '#f39c12']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Salary Comparison (You vs Average)'
+        }
+      }
+    }
+  });
+  {% endif %}
+
+  // PDF Export of Chart Only
+  function downloadPDF() {
+    const chartEl = document.getElementById('chart-section');
+    html2canvas(chartEl).then(canvas => {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+      const imgData = canvas.toDataURL('image/png');
+
+      pdf.setFontSize(18);
+      pdf.text("Salary Prediction Chart", 20, 20);
+      pdf.addImage(imgData, 'PNG', 15, 30, 180, 100);
+      pdf.save("Salary_Chart_Report.pdf");
+    });
+  }
+</script>
+
+</body>
+</html>
